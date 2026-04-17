@@ -12,15 +12,15 @@ logging.basicConfig(level=logging.INFO)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     await update.message.reply_text(
-        f"👋 Привет, {user.first_name}!\n\n"
-        "Я @ange1chid, создал этого бота для приема сообщений от пользователей.\n\n"
-        "🔍 Зачем нужен этот бот:\n"
-        "• Для быстрой связи с нами\n"
-        "• Для вопросов и предложений\n"
-        "• Для получения помощи\n\n"
-        "👨‍💼 Также у нас есть менеджер @Glycinefor_pain\n"
-        "Он поможет вам с различными вопросами и обеспечит качественную поддержку.\n\n"
-        "💬 Просто напишите ваше сообщение, и мы обязательно ответим!"
+        f"Здравствуйте! Меня зовут @ange1chid\n\n"
+        "Я создал этого бота для приема сообщений от пользователей. "
+        "Это удобный способ связаться с нами, если у вас есть вопросы, предложения "
+        "или нужна помощь.\n\n"
+        "Также у нас есть менеджер @Glycinefor_pain, который поможет вам "
+        "с решением различных вопросов.\n\n"
+        "Мы работаем, чтобы быстро отвечать на ваши обращения "
+        "и обеспечивать качественную поддержку.\n\n"
+        "Просто напишите ваше сообщение ниже, и мы обязательно ответим!"
     )
 
 async def forward_to_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -29,10 +29,10 @@ async def forward_to_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Информация о пользователе
     user_info = (
-        f"📨 Новое сообщение:\n"
-        f"👤 От: {user.first_name or 'Без имени'}\n"
-        f"🆔 ID: {user.id}\n"
-        f"📛 Юзер: @{user.username if user.username else 'Нет'}\n"
+        f"Новое сообщение от пользователя:\n"
+        f"Имя: {user.first_name or 'Не указано'}\n"
+        f"ID: {user.id}\n"
+        f"Юзернейм: @{user.username if user.username else 'Нет'}\n"
         f"---\n"
     )
     
@@ -43,42 +43,42 @@ async def forward_to_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if message.text:
                     await context.bot.send_message(
                         admin_id, 
-                        f"{user_info}📝 Сообщение:\n{message.text}"
+                        f"{user_info}Сообщение:\n{message.text}"
                     )
                 elif message.photo:
                     await context.bot.send_photo(
                         admin_id,
                         message.photo[-1].file_id,
-                        caption=f"{user_info}📷 Фото"
+                        caption=f"{user_info}Фото"
                     )
                 elif message.document:
                     await context.bot.send_document(
                         admin_id,
                         message.document.file_id,
-                        caption=f"{user_info}📎 Документ"
+                        caption=f"{user_info}Документ"
                     )
                 elif message.video:
                     await context.bot.send_video(
                         admin_id,
                         message.video.file_id,
-                        caption=f"{user_info}🎥 Видео"
+                        caption=f"{user_info}Видео"
                     )
                 elif message.audio:
                     await context.bot.send_audio(
                         admin_id,
                         message.audio.file_id,
-                        caption=f"{user_info}🎵 Аудио"
+                        caption=f"{user_info}Аудио"
                     )
                 elif message.voice:
                     await context.bot.send_voice(
                         admin_id,
                         message.voice.file_id,
-                        caption=f"{user_info}🎤 Голосовое"
+                        caption=f"{user_info}Голосовое сообщение"
                     )
                 else:
                     await context.bot.send_message(
                         admin_id,
-                        f"{user_info}📦 Другой тип сообщения"
+                        f"{user_info}Другой тип сообщения"
                     )
                 
                 logging.info(f"Сообщение отправлено админу {admin_id}")
@@ -87,10 +87,13 @@ async def forward_to_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 logging.error(f"Ошибка отправки админу {admin_id}: {e}")
         
         # Подтверждение пользователю
-        await update.message.reply_text("✅ Сообщение отправлено администраторам!")
+        await update.message.reply_text(
+            "Ваше сообщение получено и отправлено администраторам! "
+            "Мы ответим вам в ближайшее время."
+        )
         
     except Exception as e:
-        await update.message.reply_text("❌ Ошибка при отправке")
+        await update.message.reply_text("Произошла ошибка при отправке сообщения. Попробуйте еще раз.")
         logging.error(f"Общая ошибка: {e}")
 
 async def admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -107,25 +110,26 @@ async def admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         # Отправляем ответ пользователю
                         await context.bot.send_message(
                             user_id,
-                            f"📩 Ответ от администратора:\n\n{update.message.text}"
+                            f"Ответ от администратора:\n\n{update.message.text}"
                         )
                         
                         # Уведомляем админа
-                        await update.message.reply_text("✅ Ответ отправлен пользователю!")
+                        await update.message.reply_text("Ответ отправлен пользователю!")
                         
                         # Уведомляем другого админа об ответе
                         for admin_id in ADMIN_IDS:
                             if admin_id != update.message.from_user.id:
                                 try:
+                                    admin_name = "@Glycinefor_pain" if admin_id == 7064142309 else "@ange1chid"
                                     await context.bot.send_message(
                                         admin_id,
-                                        f"📨 Админ ответил пользователю ID: {user_id}"
+                                        f"Администратор ответил пользователю ID: {user_id}"
                                     )
                                 except:
                                     pass
                         break
         except Exception as e:
-            await update.message.reply_text(f"❌ Ошибка: {e}")
+            await update.message.reply_text(f"Ошибка: {e}")
             logging.error(f"Ошибка ответа админа: {e}")
 
 def main():
@@ -147,10 +151,10 @@ def main():
         forward_to_admins
     ))
     
-    print("✅ Бот запущен!")
-    print(f"👑 Админы: {ADMIN_IDS}")
-    print("📱 Напишите /start в Telegram боту")
-    print("⏹️  Ctrl+C для остановки")
+    print("Бот запущен!")
+    print(f"Админы: {ADMIN_IDS}")
+    print("Напишите /start в Telegram боту")
+    print("Ctrl+C для остановки")
     
     app.run_polling()
 
